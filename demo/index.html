@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>ARIA Manager examples</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+</head>
+<body>
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+  <div id="root">
+      <h1>ARIA Manager Examples</h1>
+      <p>This page shows different examples of how the ARIA manager can be utilized.</p>
+  </div>
+  
+
+  <div id="examples">
+    <section>
+      <h2>Example 1. Toggle a div</h2>
+      <button aria-controls="exampletarget1" aria-pressed="false">Open Example target 1</button>
+      <div id="exampletarget1" class="exampletarget" aria-hidden="true">
+        <strong>Example target 1 content</strong>
+      </div>
+    </section>
+
+    <section>
+      <h2>Example 2. Close button within a target</h2>
+      <button aria-controls="exampletarget2" aria-pressed="false">Open Example target 2</button>
+      <div id="exampletarget2" class="exampletarget" aria-hidden="true">
+        <strong>Example target 2 content</strong>
+        <hr/>
+        <button aria-controls="exampletarget2" aria-pressed="false">Close example target 2</button>
+      </div>
+    </section>
+
+    <section id="example3">
+      <h2>Example 3. Add markup to DOM and notify the ARIA Manager</h2>
+      <button id="example3-addmarkup">Add markup to DOM</button>
+      <button id="example3-addbindings">Add bindings to new Markup</button>
+      <div id="example3dom">
+
+      </div>
+      <textarea id="example3-source" aria-hidden="true">
+          <h3>Example 3 injected markup</h3>
+          <button aria-controls="exampletarget3" aria-pressed="false">Open Example target 3</button>
+          <div id="exampletarget3" class="exampletarget" aria-hidden="true">
+            <strong>Example target 3 content</strong>
+          </div>
+      </textarea>
+      <script src="example3.js"></script>
+    </section>
+      
+    <section id="example4">
+      <h2>Example 4. Open or close target within scripts</h2>
+      <button id="example4-openbutton">Open Example target 4</button>
+      <button id="example4-closebutton">Close Example target 4</button>
+      <div id="exampletarget4" class="exampletarget" aria-hidden="true">
+        <strong>Example target 4 content</strong>
+      </div>
+      <script src="example4.js"></script>
+    </section>
+  </div>
+
+  <script src="../build/index.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

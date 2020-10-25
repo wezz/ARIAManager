@@ -1,0 +1,60 @@
+{
+  "name": "@wezz/ariamanager",
+  "version": "0.0.1",
+  "description": "A script library to manage interaction and state of ARIA attributes",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "webpack",
+    "test": "jest",
+    "demo": "http-server -p 8118 -o /demo/index.html  -c-1",
+    "prepare": "npm run build",
+    "pack": "npm run build",
+    "trypublish": "npm publish || true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wezz/ARIAManager"
+  },
+  "author": "Wezz Balk <github@wezz.se> (https://github.com/wezz)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wezz/ARIAManager/issues"
+  },
+  "homepage": "https://github.com/wezz/ARIAManager",
+  "keywords": [
+    "wai-aria",
+    "aria",
+    "accessibility"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.1.0",
+    "babel-preset-minify": "^0.5.0",
+    "css-loader": "^5.0.0",
+    "eslint": "^7.12.0",
+    "file-loader": "^6.1.1",
+    "http-server": "^0.12.3",
+    "jest": "^26.6.1",
+    "prettier": "^2.1.2",
+    "prettier-webpack-plugin": "^1.2.0",
+    "style-loader": "^2.0.0",
+    "terser-webpack-plugin": "^5.0.1",
+    "ts-loader": "^8.0.7",
+    "typescript": "^4.0.3",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.2.0",
+    "webpack-cli": "^4.1.0"
+  },
+  "dependencies": {},
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/scripts/testMock.js",
+      "\\.(css|less)$": "<rootDir>/scripts/testMock.js"
+    }
+  }
+}
