@@ -3,6 +3,7 @@
 
 # testing
 /tests
+*.spec.ts
 /coverage
 
 # docs
