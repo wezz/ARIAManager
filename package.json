@@ -9,7 +9,7 @@
     "demo": "http-server -p 8118 -o /demo/index.html  -c-1",
     "prepare": "npm run build",
     "pack": "npm run build",
-    "trypublish": "npm publish || true"
+    "trypublish": "npm publish --access public || true"
   },
   "repository": {
     "type": "git",
