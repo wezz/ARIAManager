@@ -18,7 +18,7 @@ Delayed state change
 */
 export default class AriaManager {
   private controlelements: HTMLElement[] = [];
-  private controlselector = "[aria-controls]";
+  private controlselector = "[aria-controls]:not([data-ariamanager-ignore])";
   private delayAttribute = "data-ariamanager-delay";
   constructor(parent = document) {
     this.InitiateElements(parent);
@@ -45,41 +45,40 @@ export default class AriaManager {
   }
 
   public AriaExpand(target: HTMLElement, value: boolean) {
-    if (target) {
-      this.bindEventsToTargetElements(target);
-      target.dispatchEvent(
-        this.customEvent("set-aria-expanded", {
-          target: target,
-          value: value,
-        })
-      );
+    if (!target) {
+      return;
     }
+    this.bindEventsToTargetElements(target);
+    target.dispatchEvent(
+      this.customEvent("set-aria-expanded", {
+        target: target,
+        value: value,
+      })
+    );
   }
 
   public AriaHidden(target: HTMLElement, value: boolean) {
-    if (target) {
-      this.bindEventsToTargetElements(target);
-      target.dispatchEvent(
-        this.customEvent("set-aria-hidden", {
-          target: target,
-          value: value,
-        })
-      );
+    if (!target) {
+      return;
     }
+    this.bindEventsToTargetElements(target);
+    target.dispatchEvent(
+      this.customEvent("set-aria-hidden", {
+        target: target,
+        value: value,
+      })
+    );
   }
 
   public GetARIAControllerFromTarget(target: HTMLElement) {
-    // GetButtonsFromTarget
     const targetid = target.getAttribute("id") + "";
-
-    if (targetid) {
-      const relatedControls = this.controlelements.filter(
-        (elm) =>
-          (elm.getAttribute("aria-controls") + "").indexOf(targetid) !== -1
-      );
-      return relatedControls;
+    if (!targetid) {
+      return [] as HTMLElement[];
     }
-    return [] as HTMLElement[];
+    const relatedControls = this.controlelements.filter(
+      (elm) => (elm.getAttribute("aria-controls") + "").indexOf(targetid) !== -1
+    );
+    return relatedControls;
   }
 
   public GetARIAControlTargets(element: HTMLElement) {
