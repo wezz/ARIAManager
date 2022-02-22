@@ -29,7 +29,7 @@ module.exports = {
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'build'),
-    library: 'ARIAManager',
+    library: 'ariamanager',
     libraryTarget: 'umd'
   },
   optimization: {
