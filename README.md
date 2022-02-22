@@ -1,65 +1,70 @@
- <div align="center">
- <img align="center" width="180" src="https://i.imgur.com/pGGFGpi.png" />
-  <h2>Javascript Library Boilerplate Basic</h2>
-  <blockquote>Minimal Library Starter Kit for your Javascript projects</blockquote>
- 
- <a href="https://github.com/hodgef/js-library-boilerplate-basic/actions"><img alt="Build Status" src="https://github.com/hodgef/js-library-boilerplate-basic/workflows/Build/badge.svg?color=green" /></a> <a href="https://github.com/hodgef/js-library-boilerplate-basic/actions"> <img alt="Publish Status" src="https://github.com/hodgef/js-library-boilerplate-basic/workflows/Publish/badge.svg?color=green" /></a> <img src="https://img.shields.io/david/hodgef/js-library-boilerplate-basic.svg" /> <a href="https://david-dm.org/hodgef/js-library-boilerplate-basic?type=dev"><img src="https://img.shields.io/david/dev/hodgef/js-library-boilerplate-basic.svg" /></a> <img src="https://api.dependabot.com/badges/status?host=github&repo=hodgef/js-library-boilerplate-basic" />
- 
-<strong>This is a basic library boilerplate. For a more robust alternative, check out [js-library-boilerplate](https://github.com/hodgef/js-library-boilerplate).</strong>
+# ARIA Manager
 
+This is a script that will handle events related to [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.1/) attributes. 
+It's most common use is to bind click events to buttons with the [aria-controls] attribute and to toggle the attribute aria-hidden on it's target.
+The script acts as a state handler for elements with these attributes. 
+If a aria-controls target changes state, the controlling buttons will reflect that state.
+
+## Installation
+```
+npm install @wezz/ariamanager
+```
+
+## Usage
+### Initialize ARIA Manager
+```
+import ARIAManager from "@wezz/ariamanager";
+// On document ready
+new ARIAManager();
+```
+
+### Add WAI-ARIA attributes to markup
+```
+<button aria-controls="exampletarget1" aria-pressed="false">Open Example target 1</button>
+<div id="exampletarget1" class="exampletarget" aria-hidden="true">
 </div>
-
-## ⭐️ Features
-
-- Webpack 5
-- Babel 7
-- UMD exports, so your library works everywhere.
-- Jest unit testing
-- Daily [dependabot](https://dependabot.com) dependency updates
-
-## 📦 Getting Started
-
-```
-git clone https://github.com/hodgef/js-library-boilerplate-basic.git myLibrary
-npm install
 ```
 
-## 💎 Customization
-
-> Before shipping, make sure to:
-1. Edit `LICENSE` file
-2. Edit `package.json` information (These will be used to generate the headers for your built files)
-3. Edit `library: "MyLibrary"` with your library's export name in `./webpack.config.js`
-
-## 🚀 Deployment
-1. `npm publish`
-2. Your users can include your library as usual
-
-### npm
+## Advanced usage
+### Programatic triggers
+The ARIA manager is a class with methods so you can programatically toggle elements visibility and the controlling buttons will reflect the targets state.
 ```
-import MyLibrary from 'my-library';
-const libraryInstance = new MyLibrary();
-...
+const ariaInstance = new ARIAManager();
+// This will set the attribute to the target to be _aria-expanded="true"_. 
+// And any button that targets that element and has the aria-pressed attribute will reflect that state.
+ariaInstance.AriaExpand(document.getElementById("exampletarget1"), true); 
 ```
 
-### self-host/cdn
-```
-<script src="build/index.js"></script>
+### Adding markup after DOMContentLoaded
+If markup has been added to a page after the ARIA Manager has been updated, it is possible to initialize new elements using a global event against the window.
 
-const MyLibrary = window.MyLibrary.default;
-const libraryInstance = new MyLibrary();
-...
+```
+window.dispatchEvent(new CustomEvent('global-markupchange', { detail: { target: document.querySelector(".additionalDataContainer") } }));
 ```
 
-> **Note:** In this minimal version, any images and css files you import will be added to the js bundle. If you want them as separate files, you can use [js-library-boilerplate](https://github.com/hodgef/js-library-boilerplate) or edit the Webpack config accordingly.
+The target in the event is optional, but if a target has been added (as a HTML Element) to the detail data;
+Then the ARIA Manager will only search for new elements to bind to within that container.
 
-## ✅ Libraries built with this boilerplate
+## Usage in combination of reactive frameworks (ARIA Manager Ignore)
+The most common usecase is that the ARIA Manager will run on document ready. 
+It is not recommended to use the ARIA Manager within reactive frameworks since the bindings will not re-initialize or get lost when the markup changes. 
 
-> Made a library using this starter kit? Share it here by [submitting a pull request](https://github.com/hodgef/js-library-boilerplate-basic/pulls)!
+But if you have a reactive component that use aria-controls attributes on a page that has ARIA Manager, you can add the attribute _data-ariamanager-ignore_ to the aria-controls elements within the reactive component / app to avoid having ARIA Manager adjusting attributes. 
 
-- [Canvas-Txt](https://github.com/geongeorge/Canvas-Txt) - A library to print multiline text on HTML5 canvas with better line breaks and alignments
-- [moon-phase-widget](https://github.com/g00dv1n/moon-phase-widget) - Super tiny javascript library to add awesome moon phase widget to your website
-- [simple-keyboard-autocorrect](https://github.com/hodgef/simple-keyboard-autocorrect) - Autocorrect module for simple-keyboard
-- [simple-keyboard-input-mask](https://github.com/hodgef/simple-keyboard-input-mask) - Input mask module for simple-keyboard
-- [simple-keyboard-key-navigation](https://github.com/hodgef/simple-keyboard-key-navigation) - Key navigation module for simple-keyboard
-- [swipe-keyboard](https://github.com/hodgef/swipe-keyboard) - Swype type keyboard module for simple-keyboard
+Vue Example
+```
+<button 
+    aria-controls="myexamplediv" 
+    data-ariamanager-ignore
+    v-bind:click="this.openState = !this.openState">Toggle</button>
+<div id="myexamplediv" v-bind:aria-hidden="(!this.openState)+''">
+</div>
+```
+
+## Development & Demo
+Clone this repo
+Run
+``` npm install ```
+
+To run the interactive demo, run 
+``` npm run demo ```
