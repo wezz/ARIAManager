@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const PrettierPlugin = require("prettier-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const getPackageJson = require('./scripts/getPackageJson');
 const CopyPlugin = require("copy-webpack-plugin");
@@ -57,7 +56,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new PrettierPlugin(),
     new webpack.BannerPlugin(banner),
     new CopyPlugin({
       
