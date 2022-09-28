@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const PrettierPlugin = require("prettier-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const getPackageJson = require('./scripts/getPackageJson');
+const CopyPlugin = require("copy-webpack-plugin");
 
 const {
   version,
@@ -57,7 +58,17 @@ module.exports = {
   },
   plugins: [
     new PrettierPlugin(),
-    new webpack.BannerPlugin(banner)
+    new webpack.BannerPlugin(banner),
+    new CopyPlugin({
+      
+      patterns:[
+         {
+            context:'./src/',
+            from:'*.ts',
+            to: './',
+         }
+       ]
+    })
   ],
   resolve: {
       extensions: [".tsx", ".ts", ".js"]
