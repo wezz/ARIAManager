@@ -1,6 +1,6 @@
 /*!
  * 
- *   @wezz/ariamanager v0.0.5
+ *   @wezz/ariamanager v0.0.6
  *   https://github.com/wezz/ARIAManager
  *
  *   Copyright (c) Wezz Balk (https://github.com/wezz)
