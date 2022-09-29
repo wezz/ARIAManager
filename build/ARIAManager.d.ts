@@ -1,5 +1,5 @@
 ﻿export default class AriaManager {
-  constructor(parent: HTMLElement): void;
+  constructor(parent: HTMLElement);
   InitiateElements(parent: HTMLElement): void;
   AriaExpand(target: HTMLElement, value: boolean): void;
   AriaHidden(target: HTMLElement, value: boolean): void;
