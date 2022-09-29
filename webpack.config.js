@@ -58,7 +58,6 @@ module.exports = {
   plugins: [
     new webpack.BannerPlugin(banner),
     new CopyPlugin({
-      
       patterns:[
          {
             context:'./src/',
