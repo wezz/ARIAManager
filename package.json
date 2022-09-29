@@ -1,6 +1,6 @@
 {
   "name": "@wezz/ariamanager",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A script library to manage interaction and state of ARIA attributes",
   "main": "build/index.js",
   "types": "build/ARIAManager.d.ts",
