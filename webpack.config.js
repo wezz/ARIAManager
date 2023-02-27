@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
 const getPackageJson = require('./scripts/getPackageJson');
 const CopyPlugin = require("copy-webpack-plugin");
 
@@ -29,14 +28,13 @@ module.exports = {
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'build'),
-    library: 'ariamanager',
-    libraryTarget: 'umd'
+    library: {
+      name: 'ariamanager',
+      type: 'umd',
+    },
   },
   optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin({
-      extractComments: false
-    })],
+    minimize: false
   },
   module: {
     rules: [
@@ -45,14 +43,6 @@ module.exports = {
         loader: 'ts-loader',
         exclude: /node_modules/,
       },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,
-        use: ['url-loader'],
-      }
     ]
   },
   plugins: [
@@ -65,7 +55,7 @@ module.exports = {
             to: './',
          }
        ]
-    })
+    }),
   ],
   resolve: {
       extensions: [".tsx", ".ts", ".js"]
