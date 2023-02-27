@@ -1,16 +1,22 @@
 {
   "name": "@wezz/ariamanager",
-  "version": "0.0.8",
-  "description": "A script library to manage interaction and state of ARIA attributes",
-  "main": "build/index.js",
-  "types": "build/ARIAManager.d.ts",
+  "version": "0.1.1",
+  "type": "module",
+  "main": "./dist/ariamanager.umd.cjs",
+  "module": "./dist/ariamanager.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/ariamanager.js",
+      "require": "./dist/ariamanager.umd.cjs"
+    }
+  },
+  "files":[
+    "dist"
+  ],
   "scripts": {
-    "build": "webpack",
-    "test": "jest",
-    "demo": "http-server -p 8118 -o /demo/index.html  -c-1",
-    "prepare": "npm run build",
-    "pack": "npm run build",
-    "trypublish": "npm publish --access public || true"
+    "dev": "vite",
+    "build": "tsc && vite build"
   },
   "repository": {
     "type": "git",
@@ -28,22 +34,9 @@
     "accessibility"
   ],
   "devDependencies": {
-    "@types/jest": "^26.0.15",
-    "@types/node": "^14.14.2",
-    "copy-webpack-plugin": "9.1.0",
-    "css-loader": "^5.0.0",
-    "eslint": "^7.12.0",
-    "file-loader": "^6.1.1",
-    "http-server": "^0.12.3",
-    "jest": "^26.6.1",
-    "prettier": "^2.1.2",
-    "style-loader": "^2.0.0",
-    "terser-webpack-plugin": "^5.0.1",
-    "ts-jest": "^26.4.2",
-    "ts-loader": "^8.0.7",
-    "typescript": "^4.9.5",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.2.0",
-    "webpack-cli": "^4.1.0"
+    "@types/node": "^18.14.2",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0",
+    "vite-plugin-dts": "^2.0.2"
   }
 }

@@ -20,19 +20,19 @@ export default class AriaManager {
   private controlelements: HTMLElement[] = [];
   private controlselector = "[aria-controls]:not([data-ariamanager-ignore])";
   private delayAttribute = "data-ariamanager-delay";
-  constructor(parent = document) {
+  constructor(parent : HTMLElement = document.body) {
     this.InitiateElements(parent);
     window.addEventListener("global-markupchange", (e) => {
       this.InitiateElements((e as any)?.detail?.target ?? document);
     });
   }
 
-  public InitiateElements(parent = document) {
+  public InitiateElements(parent : HTMLElement = document.body) {
     const controlElements = [].slice.call(
       parent.querySelectorAll(this.controlselector)
-    );
+    ) as HTMLElement[];
     const newElements = controlElements.filter((elm) => {
-      return (elm as HTMLElement).dataset.ariamanager !== "activated";
+      return (elm).dataset.ariamanager !== "activated";
     });
     newElements.forEach((elm) => {
       this.bindEvents(elm);
@@ -203,8 +203,12 @@ export default class AriaManager {
       );
     });
   }
-  private beforeClickEvent(elm: HTMLElement, e: any) {}
-  private adjustTargetStates(elm: HTMLElement, e: any) {
+  private beforeClickEvent(elm: HTMLElement, e: Event) {
+    if (!elm || !e) {
+      return;
+    }
+  }
+  private adjustTargetStates(elm: HTMLElement, e: Event) {
     const targets = this.GetARIAControlTargets(elm); // Get target elements from button
     targets.forEach((target) => {
       if (target.hasAttribute("aria-hidden")) {
@@ -219,6 +223,9 @@ export default class AriaManager {
         this.AriaExpand(target, !isHidden);
       }
     });
+    if (!e) {
+      return;
+    }
   }
 
   private getDelayValue(elm: HTMLElement) {
