@@ -16,7 +16,10 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "prepare": "npm run build",
+    "pack": "npm run build",
+    "trypublish": "npm publish --access public || true"
   },
   "repository": {
     "type": "git",
