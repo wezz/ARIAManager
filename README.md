@@ -18,6 +18,16 @@ import ARIAManager from "@wezz/ariamanager";
 new ARIAManager();
 ```
 
+#### Initiation options
+The constructor can take the following options object
+```
+const ariaOptions = { 
+    parent: document.body, // This defined the entrypoint where ARIA Manager will query for relevant elements
+    initiateElements: true // This disables the automatic initiation
+};
+new ARIAManager(ariaOptions);
+```
+
 ### Add WAI-ARIA attributes to markup
 ```
 <button aria-controls="exampletarget1" aria-pressed="false">Open Example target 1</button>

@@ -1,15 +1,20 @@
-var c = Object.defineProperty;
-var u = (r, t, e) => t in r ? c(r, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : r[t] = e;
-var d = (r, t, e) => (u(r, typeof t != "symbol" ? t + "" : t, e), e);
+var u = Object.defineProperty;
+var c = (r, t, e) => t in r ? u(r, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : r[t] = e;
+var d = (r, t, e) => (c(r, typeof t != "symbol" ? t + "" : t, e), e);
 class h {
-  constructor(t = document.body) {
+  constructor(t) {
     d(this, "controlelements", []);
     d(this, "controlselector", "[aria-controls]:not([data-ariamanager-ignore])");
     d(this, "delayAttribute", "data-ariamanager-delay");
-    this.InitiateElements(t), window.addEventListener("global-markupchange", (e) => {
-      var n;
-      this.InitiateElements(((n = e == null ? void 0 : e.detail) == null ? void 0 : n.target) ?? document);
-    });
+    const e = this.parseOptions(t);
+    e.initiateElements && (this.InitiateElements(e.parent), window.addEventListener("global-markupchange", (n) => {
+      var a;
+      this.InitiateElements(((a = n == null ? void 0 : n.detail) == null ? void 0 : a.target) ?? document);
+    }));
+  }
+  parseOptions(t) {
+    const e = { parent: document.body, initiateElements: !0 };
+    return !t || typeof t != "object" || typeof t.parent > "u" && typeof t.initiateElements > "u" ? e : { ...e, ...t };
   }
   InitiateElements(t = document.body) {
     const n = [].slice.call(

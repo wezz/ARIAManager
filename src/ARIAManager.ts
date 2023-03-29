@@ -20,11 +20,22 @@ export default class AriaManager {
   private controlelements: HTMLElement[] = [];
   private controlselector = "[aria-controls]:not([data-ariamanager-ignore])";
   private delayAttribute = "data-ariamanager-delay";
-  constructor(parent : HTMLElement = document.body) {
-    this.InitiateElements(parent);
+  constructor(options?: ARIAManagerInitiationOptions) {
+    const constructorOptions = this.parseOptions(options);
+    if (!constructorOptions.initiateElements) {
+      return;
+    }
+    this.InitiateElements(constructorOptions.parent);
     window.addEventListener("global-markupchange", (e) => {
       this.InitiateElements((e as any)?.detail?.target ?? document);
     });
+  }
+  private parseOptions(options?: ARIAManagerInitiationOptions) {
+    const defaultOptions = { parent: document.body, initiateElements: true };
+    if (!options || typeof options !== "object" || (typeof options.parent === "undefined" && typeof options.initiateElements === "undefined")) {
+      return defaultOptions;
+    }
+    return {...defaultOptions, ...options};
   }
 
   public InitiateElements(parent : HTMLElement = document.body) {
@@ -245,4 +256,9 @@ export default class AriaManager {
       detail: details,
     });
   }
+}
+
+interface ARIAManagerInitiationOptions {
+  parent?: HTMLElement;
+  initiateElements?: Boolean;
 }

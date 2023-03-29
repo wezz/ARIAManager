@@ -1,6 +1,6 @@
 {
   "name": "@wezz/ariamanager",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "type": "module",
   "main": "./dist/ariamanager.umd.cjs",
   "module": "./dist/ariamanager.js",

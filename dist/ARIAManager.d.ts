@@ -2,7 +2,8 @@ export default class AriaManager {
     private controlelements;
     private controlselector;
     private delayAttribute;
-    constructor(parent?: HTMLElement);
+    constructor(options?: ARIAManagerInitiationOptions);
+    private parseOptions;
     InitiateElements(parent?: HTMLElement): void;
     AriaExpand(target: HTMLElement, value: boolean): void;
     AriaHidden(target: HTMLElement, value: boolean): void;
@@ -20,3 +21,8 @@ export default class AriaManager {
     private getDelayValue;
     private customEvent;
 }
+interface ARIAManagerInitiationOptions {
+    parent?: HTMLElement;
+    initiateElements?: Boolean;
+}
+export {};
