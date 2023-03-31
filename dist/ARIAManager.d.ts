@@ -1,4 +1,4 @@
-export default class AriaManager {
+export default class ARIAManager {
     private controlelements;
     private controlselector;
     private delayAttribute;
