@@ -16,7 +16,7 @@ Delayed state change
     id="mycontent"
     aria-hidden="true">Hidden until button is pressed</div>
 */
-export default class ARIAManager {
+class ARIAManager {
   private controlelements: HTMLElement[] = [];
   private controlselector = "[aria-controls]:not([data-ariamanager-ignore])";
   private delayAttribute = "data-ariamanager-delay";
@@ -262,3 +262,5 @@ interface ARIAManagerInitiationOptions {
   parent?: HTMLElement;
   initiateElements?: Boolean;
 }
+
+export { ARIAManager }

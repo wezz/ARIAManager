@@ -1,3 +1,3 @@
-import ARIAManager from './ARIAManager';
+import { ARIAManager } from './ARIAManager';
 
 new ARIAManager();

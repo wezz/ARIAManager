@@ -1,1 +1,2 @@
-export { default as ARIAManager } from './ARIAManager';
+import { ARIAManager } from './ARIAManager';
+export { ARIAManager };
