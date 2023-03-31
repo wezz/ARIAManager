@@ -159,5 +159,5 @@ class h {
   }
 }
 export {
-  h as ARIAManager
+  h as default
 };

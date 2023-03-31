@@ -1,4 +1,4 @@
-declare class ARIAManager {
+export default class ARIAManager {
     private controlelements;
     private controlselector;
     private delayAttribute;
@@ -25,4 +25,4 @@ interface ARIAManagerInitiationOptions {
     parent?: HTMLElement;
     initiateElements?: Boolean;
 }
-export { ARIAManager };
+export {};
