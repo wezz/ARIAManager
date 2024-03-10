@@ -145,18 +145,46 @@
       <p>Box 1 should be visible in a tablet viewport (+768px), but hidden in mobile</p>
       <script type="module">
         import MatchMediaAttributeManager from 'https://cdn.jsdelivr.net/npm/@wezz/matchmediaattributemanager/dist/matchmediaattributemanager.js';
-        console.log('MatchMediaAttributeManager', MatchMediaAttributeManager);
         new MatchMediaAttributeManager();
       </script>
 
       <button aria-controls="exampletarget6-1" aria-pressed="false">Toggle first box</button>
-      
-
 
       <div id="exampletarget6-1" class="exampletarget" data-matchmedia-query="(max-width: 768px)" data-matchmedia-attribute="aria-hidden,true,true">
         <strong>Box 1</strong>
         <p>This box only be visible by default when in a viewport wider than 768px</p>
       </div>
     </section>
+
+    <section id="example7">
+      <h2>Example 7. Event bindings on aria state changes</h2>
+      <p>This example counts how many times a element has been visible, and if it currently is visible</p>
+      <button aria-controls="exampletarget7-1" aria-pressed="false">Toggle</button>
+
+      <p>Element visible: <strong id="exampletarget7-state">false</strong></p>
+      <p>Element visible count: <strong id="exampletarget7-count">0</strong></p>
+      <div id="exampletarget7-1" class="exampletarget" aria-hidden="true">
+        <strong>Box 1</strong>
+      </div>
+
+      <script>
+          document.addEventListener("DOMContentLoaded",function(){
+            let count = 0;
+            const state = document.getElementById("exampletarget7-state");
+            const countTarget = document.getElementById('exampletarget7-count');
+            const target = document.getElementById("exampletarget7-1");
+            
+            target.addEventListener('set-aria-hidden', (e) => {
+              console.log('e', e.detail)
+              state.innerHTML = (!e.detail.value)+'';
+              if (e.detail.value === false) {
+                count++;
+              }
+              countTarget.innerHTML = count;
+            })
+          });
+      </script>
+    </section>
+
   </body>
 </html>

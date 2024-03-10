@@ -6,13 +6,13 @@ The script acts as a state handler for elements with these attributes.
 If a aria-controls target changes state, the controlling buttons will reflect that state.
 
 ## Installation
-```
+```>
 npm install @wezz/ariamanager
 ```
 
 ## Usage
 ### Initialize ARIA Manager
-```
+```js
 import ARIAManager from "@wezz/ariamanager";
 // On document ready
 new ARIAManager();
@@ -20,7 +20,7 @@ new ARIAManager();
 
 #### Initiation options
 The constructor can take the following options object
-```
+```js
 const ariaOptions = { 
     parent: document.body, // This defined the entrypoint where ARIA Manager will query for relevant elements
     initiateElements: true // This disables the automatic initiation
@@ -29,16 +29,36 @@ new ARIAManager(ariaOptions);
 ```
 
 ### Add WAI-ARIA attributes to markup
-```
+```html
 <button aria-controls="exampletarget1" aria-pressed="false">Open Example target 1</button>
 <div id="exampletarget1" class="exampletarget" aria-hidden="true">
 </div>
 ```
 
 ## Advanced usage
+### Listening to ARIA state changes
+If you want to react to something being hidden or visible, the best way is to listen to the internal events being trigged by the ARIAManager.
+
+If a target changes it's ```aria-hidden``` state you can use the **set-aria-hidden** event. 
+
+```html
+<button aria-controls="eventexample">Toggle</button>
+<div id="eventexample" aria-hidden="true">
+</div>
+```
+```js
+const target = document.getElementById("eventexample");
+target.addEventListener('set-aria-hidden', (e) => {
+    console.log('New aria-hidden state is', e.detail.value);
+});
+```
+
+*Note that binding to a toggle buttons click event is not recommended when attempting to detect a state.<br/>
+There can be delays between the click event and that aria attributes are updated*
+
 ### Programatic triggers
 The ARIA manager is a class with methods so you can programatically toggle elements visibility and the controlling buttons will reflect the targets state.
-```
+```js
 const ariaInstance = new ARIAManager();
 // This will set the attribute to the target to be _aria-expanded="true"_. 
 // And any button that targets that element and has the aria-pressed attribute will reflect that state.
@@ -48,7 +68,7 @@ ariaInstance.AriaExpand(document.getElementById("exampletarget1"), true);
 ### Adding markup after DOMContentLoaded
 If markup has been added to a page after the ARIA Manager has been updated, it is possible to initialize new elements using a global event against the window.
 
-```
+```js
 window.dispatchEvent(new CustomEvent('global-markupchange', { detail: { target: document.querySelector(".additionalDataContainer") } }));
 ```
 
@@ -62,7 +82,7 @@ It is not recommended to use the ARIA Manager within reactive frameworks since t
 But if you have a reactive component that use aria-controls attributes on a page that has ARIA Manager, you can add the attribute _data-ariamanager-ignore_ to the aria-controls elements within the reactive component / app to avoid having ARIA Manager adjusting attributes. 
 
 Vue Example
-```
+```html
 <button 
     aria-controls="myexamplediv" 
     data-ariamanager-ignore
