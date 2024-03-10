@@ -86,9 +86,14 @@ export default class ARIAManager {
     if (!targetid) {
       return [] as HTMLElement[];
     }
-    const relatedControls = this.controlelements.filter(
-      (elm) => (elm.getAttribute("aria-controls") + "").indexOf(targetid) !== -1
-    );
+    console.log("this.controlelements", this.controlelements);
+    const relatedControls = this.controlelements.filter((elm) => {
+      return (
+        (elm.getAttribute("aria-controls") + "")
+          .split(" ")
+          .indexOf(targetid) !== -1
+      );
+    });
     return relatedControls;
   }
 
@@ -163,6 +168,7 @@ export default class ARIAManager {
   }
 
   private updateButtonState(elm: HTMLElement, e: any) {
+    console.log("updateButtonState(elm", elm);
     const getAttrVal = (attrElm: HTMLElement, attr: string) =>
       attrElm.hasAttribute(attr) ? attrElm.getAttribute(attr) : null;
     const target = e.detail.target as HTMLElement;
@@ -185,6 +191,7 @@ export default class ARIAManager {
         value: value,
       })
     );
+    console.log("relatedControls", target, relatedControls);
     relatedControls.forEach((relatedControl) => {
       relatedControl.dispatchEvent(
         this.customEvent("updateButtonState", {

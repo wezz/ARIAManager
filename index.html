@@ -99,7 +99,27 @@
         });
       </script>
     </section>
-      
-    
+    <section id="example4">
+      <h2>Example 4. Test in mobile navigation context</h2>
+      <button aria-controls="example4-menu" aria-expanded="false" aria-pressed="false">Toggle menu</button>
+      <nav id="example4-menu" aria-hidden="true">
+        <ul>
+          <li>
+            <button aria-controls="example4-menu-1" aria-expanded="false" aria-pressed="false">Toggle Item 1</button>
+            <ul id="example4-menu-1" aria-hidden="true">
+              <li><a href="#level1-1">Link 1.1</a></li>
+              <li><a href="#level1-1">Link 1.2</a></li>
+            </ul>
+          </li>
+          <li>
+            <button aria-controls="example4-menu-2" aria-expanded="false" aria-pressed="false">Toggle Item 2</button>
+            <ul id="example4-menu-2" aria-hidden="true">
+              <li><a href="#level1-1">Link 2.1</a></li>
+              <li><a href="#level1-1">Link 2.2</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </section>
   </body>
 </html>
