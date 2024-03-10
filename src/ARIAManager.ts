@@ -32,18 +32,23 @@ export default class ARIAManager {
   }
   private parseOptions(options?: ARIAManagerInitiationOptions) {
     const defaultOptions = { parent: document.body, initiateElements: true };
-    if (!options || typeof options !== "object" || (typeof options.parent === "undefined" && typeof options.initiateElements === "undefined")) {
+    if (
+      !options ||
+      typeof options !== "object" ||
+      (typeof options.parent === "undefined" &&
+        typeof options.initiateElements === "undefined")
+    ) {
       return defaultOptions;
     }
-    return {...defaultOptions, ...options};
+    return { ...defaultOptions, ...options };
   }
 
-  public InitiateElements(parent : HTMLElement = document.body) {
+  public InitiateElements(parent: HTMLElement = document.body) {
     const controlElements = [].slice.call(
       parent.querySelectorAll(this.controlselector)
     ) as HTMLElement[];
     const newElements = controlElements.filter((elm) => {
-      return (elm).dataset.ariamanager !== "activated";
+      return elm.dataset.ariamanager !== "activated";
     });
     newElements.forEach((elm) => {
       this.bindEvents(elm);
@@ -86,7 +91,6 @@ export default class ARIAManager {
     if (!targetid) {
       return [] as HTMLElement[];
     }
-    console.log("this.controlelements", this.controlelements);
     const relatedControls = this.controlelements.filter((elm) => {
       return (
         (elm.getAttribute("aria-controls") + "")
@@ -168,7 +172,6 @@ export default class ARIAManager {
   }
 
   private updateButtonState(elm: HTMLElement, e: any) {
-    console.log("updateButtonState(elm", elm);
     const getAttrVal = (attrElm: HTMLElement, attr: string) =>
       attrElm.hasAttribute(attr) ? attrElm.getAttribute(attr) : null;
     const target = e.detail.target as HTMLElement;
@@ -191,7 +194,6 @@ export default class ARIAManager {
         value: value,
       })
     );
-    console.log("relatedControls", target, relatedControls);
     relatedControls.forEach((relatedControl) => {
       relatedControl.dispatchEvent(
         this.customEvent("updateButtonState", {
