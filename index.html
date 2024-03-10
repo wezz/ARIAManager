@@ -101,7 +101,7 @@
     </section>
     <section id="example4">
       <h2>Example 4. Test in mobile navigation context</h2>
-      <button aria-controls="example4-menu" aria-expanded="false" aria-pressed="false">Toggle menu</button>
+      <button aria-controls="example4-menu" aria-expanded="false" aria-haspopup="true" aria-pressed="false">Toggle menu</button>
       <nav id="example4-menu" aria-hidden="true">
         <ul>
           <li>
@@ -137,6 +137,25 @@
         <strong>Box 2</strong>
         <hr/>
         <button aria-controls="exampletarget5-2" aria-pressed="false">Close box 1</button>
+      </div>
+    </section>
+
+    <section id="example6">
+      <h2>Example 6. Viewport controlled aria-hidden using <a href="https://github.com/wezz/MatchMediaAttributeManager" target="_blank">MatchMedia Attribute Manager</a></h2>
+      <p>Box 1 should be visible in a tablet viewport (+768px), but hidden in mobile</p>
+      <script type="module">
+        import MatchMediaAttributeManager from 'https://cdn.jsdelivr.net/npm/@wezz/matchmediaattributemanager/dist/matchmediaattributemanager.js';
+        console.log('MatchMediaAttributeManager', MatchMediaAttributeManager);
+        new MatchMediaAttributeManager();
+      </script>
+
+      <button aria-controls="exampletarget6-1" aria-pressed="false">Toggle first box</button>
+      
+
+
+      <div id="exampletarget6-1" class="exampletarget" data-matchmedia-query="(max-width: 768px)" data-matchmedia-attribute="aria-hidden,true,true">
+        <strong>Box 1</strong>
+        <p>This box only be visible by default when in a viewport wider than 768px</p>
       </div>
     </section>
   </body>

@@ -77,7 +77,16 @@ Look in the [example html file](https://github.com/wezz/ARIAManager/blob/main/in
 ## Related packages
 ARIAManager mainly works with the direct relation of elements with aria-controls and it's related targets. 
 
+### ARIATabManager
 There is another manager called [ARIATabManager](https://github.com/wezz/ARIATabManager) that handles the relationship between multiple elements that manage view states. Use that to easily enable tabbing behavior (close an open area if a sibling is selected).
+
+### [MatchMedia Attribute Manager](https://github.com/wezz/MatchMediaAttributeManager)
+Adding a ```aria-hidden``` attribute and not using it for it's intended use is bad for accessibility.<br>
+Elements can be visually visible but hidden for users using screenreaders and more. 
+
+The MatchMedia Attribute Manager makes it possible to remove or add ```aria-hidden``` depending on a media query.
+
+Use cases can be that you want to show a navigation in desktop, but in mobile it's supposed to be hidden by default and toggled by a button.
 
 ## Development & Demo
 Clone this repo
