@@ -71,6 +71,14 @@ Vue Example
 </div>
 ```
 
+## Examples
+Look in the [example html file](https://github.com/wezz/ARIAManager/blob/main/index.html) for more markup examples on how to use the ARIAManager
+
+## Related packages
+ARIAManager mainly works with the direct relation of elements with aria-controls and it's related targets. 
+
+There is another manager called [ARIATabManager](https://github.com/wezz/ARIATabManager) that handles the relationship between multiple elements that manage view states. Use that to easily enable tabbing behavior (close an open area if a sibling is selected).
+
 ## Development & Demo
 Clone this repo
 Run

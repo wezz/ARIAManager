@@ -121,5 +121,23 @@
         </ul>
       </nav>
     </section>
+
+    <section>
+      <h2>Example 5. Target multiple targets</h2>
+      <p>For tabbing behavior (close siblings when one box is selected) use the related <a href="https://github.com/wezz/ARIATabManager" target="_blank">ARIATabManager</a></p>
+      <button aria-controls="exampletarget5-1 exampletarget5-2" aria-pressed="false">Toggle all boxes</button>
+      <button aria-controls="exampletarget5-1" aria-pressed="false">Toggle first box</button>
+      <button aria-controls="exampletarget5-2" aria-pressed="false">Toggle second box</button>
+      <div id="exampletarget5-1" class="exampletarget" aria-hidden="true">
+        <strong>Box 1</strong>
+        <hr/>
+        <button aria-controls="exampletarget5-1" aria-pressed="false">Close box 1</button>
+      </div>
+      <div id="exampletarget5-2" class="exampletarget" aria-hidden="true">
+        <strong>Box 2</strong>
+        <hr/>
+        <button aria-controls="exampletarget5-2" aria-pressed="false">Close box 1</button>
+      </div>
+    </section>
   </body>
 </html>
