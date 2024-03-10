@@ -1,15 +1,15 @@
-var u = Object.defineProperty;
-var c = (r, t, e) => t in r ? u(r, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : r[t] = e;
-var d = (r, t, e) => (c(r, typeof t != "symbol" ? t + "" : t, e), e);
+var l = Object.defineProperty;
+var u = (r, t, e) => t in r ? l(r, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : r[t] = e;
+var d = (r, t, e) => (u(r, typeof t != "symbol" ? t + "" : t, e), e);
 class h {
   constructor(t) {
     d(this, "controlelements", []);
     d(this, "controlselector", "[aria-controls]:not([data-ariamanager-ignore])");
     d(this, "delayAttribute", "data-ariamanager-delay");
     const e = this.parseOptions(t);
-    e.initiateElements && (this.InitiateElements(e.parent), window.addEventListener("global-markupchange", (n) => {
-      var a;
-      this.InitiateElements(((a = n == null ? void 0 : n.detail) == null ? void 0 : a.target) ?? document);
+    e.initiateElements && (this.InitiateElements(e.parent), window.addEventListener("global-markupchange", (a) => {
+      var n;
+      this.InitiateElements(((n = a == null ? void 0 : a.detail) == null ? void 0 : n.target) ?? document);
     }));
   }
   parseOptions(t) {
@@ -17,14 +17,14 @@ class h {
     return !t || typeof t != "object" || typeof t.parent > "u" && typeof t.initiateElements > "u" ? e : { ...e, ...t };
   }
   InitiateElements(t = document.body) {
-    const n = [].slice.call(
+    const a = [].slice.call(
       t.querySelectorAll(this.controlselector)
-    ).filter((a) => a.dataset.ariamanager !== "activated");
-    n.forEach((a) => {
-      this.bindEvents(a), a.dataset.ariamanager = "activated";
+    ).filter((n) => n.dataset.ariamanager !== "activated");
+    a.forEach((n) => {
+      this.bindEvents(n), n.dataset.ariamanager = "activated";
     }), this.controlelements = [].concat(
       this.controlelements,
-      n
+      a
     );
   }
   AriaExpand(t, e) {
@@ -45,19 +45,17 @@ class h {
   }
   GetARIAControllerFromTarget(t) {
     const e = t.getAttribute("id") + "";
-    return e ? this.controlelements.filter(
-      (a) => (a.getAttribute("aria-controls") + "").indexOf(e) !== -1
-    ) : [];
+    return e ? (console.log("this.controlelements", this.controlelements), this.controlelements.filter((n) => (n.getAttribute("aria-controls") + "").split(" ").indexOf(e) !== -1)) : [];
   }
   GetARIAControlTargets(t) {
     const e = (t.getAttribute("aria-controls") + "").split(
       " "
-    ), n = [], a = (i, s) => i.indexOf(s) === 0;
+    ), a = [], n = (i, s) => i.indexOf(s) === 0;
     return e.forEach((i) => {
-      i = (!a(i, "#") && !a(i, ".") ? "#" : "") + i;
+      i = (!n(i, "#") && !n(i, ".") ? "#" : "") + i;
       const s = document.querySelector(i);
-      s && n.push(s);
-    }), n;
+      s && a.push(s);
+    }), a;
   }
   onButtonClick(t) {
     const e = this.getDelayValue(t);
@@ -76,8 +74,8 @@ class h {
   }
   bindEvents(t) {
     const e = t;
-    this.bindEventsToControlElements(e), this.GetARIAControlTargets(e).forEach((a) => {
-      this.bindEventsToTargetElements(a);
+    this.bindEventsToControlElements(e), this.GetARIAControlTargets(e).forEach((n) => {
+      this.bindEventsToTargetElements(n);
     });
   }
   bindEventsToTargetElements(t) {
@@ -96,17 +94,18 @@ class h {
     );
   }
   updateButtonState(t, e) {
-    const n = (s, o) => s.hasAttribute(o) ? s.getAttribute(o) : null, a = e.detail.target, i = n(a, "aria-hidden");
+    console.log("updateButtonState(elm", t);
+    const a = (s, o) => s.hasAttribute(o) ? s.getAttribute(o) : null, n = e.detail.target, i = a(n, "aria-hidden");
     t.hasAttribute("aria-pressed") && t.setAttribute("aria-pressed", (i === "false") + ""), t.hasAttribute("aria-expanded") && t.setAttribute("aria-expanded", (i === "false") + "");
   }
   setAriaHidden(t) {
-    const e = t.detail.target, n = t.detail.value, a = this.GetARIAControllerFromTarget(e);
-    e.setAttribute("aria-hidden", n), e.dispatchEvent(
+    const e = t.detail.target, a = t.detail.value, n = this.GetARIAControllerFromTarget(e);
+    e.setAttribute("aria-hidden", a), e.dispatchEvent(
       this.customEvent("aria-hidden-change", {
         target: e,
-        value: n
+        value: a
       })
-    ), a.forEach((i) => {
+    ), console.log("relatedControls", e, n), n.forEach((i) => {
       i.dispatchEvent(
         this.customEvent("updateButtonState", {
           target: e
@@ -115,13 +114,13 @@ class h {
     });
   }
   setAriaExpanded(t) {
-    const e = t.detail.target, n = t.detail.value, a = this.GetARIAControllerFromTarget(e);
-    e.hasAttribute("data-aria-expanded") && e.setAttribute("data-aria-expanded", n + ""), e.dispatchEvent(
+    const e = t.detail.target, a = t.detail.value, n = this.GetARIAControllerFromTarget(e);
+    e.hasAttribute("data-aria-expanded") && e.setAttribute("data-aria-expanded", a + ""), e.dispatchEvent(
       this.customEvent("aria-expanded-change", {
         target: e,
-        value: n
+        value: a
       })
-    ), a.forEach((i) => {
+    ), n.forEach((i) => {
       i.dispatchEvent(
         this.customEvent("updateButtonState", {
           target: e
@@ -132,23 +131,23 @@ class h {
   beforeClickEvent(t, e) {
   }
   adjustTargetStates(t, e) {
-    this.GetARIAControlTargets(t).forEach((a) => {
-      if (a.hasAttribute("aria-hidden")) {
-        const i = a.getAttribute("aria-hidden") === "true";
-        this.AriaHidden(a, !i);
+    this.GetARIAControlTargets(t).forEach((n) => {
+      if (n.hasAttribute("aria-hidden")) {
+        const i = n.getAttribute("aria-hidden") === "true";
+        this.AriaHidden(n, !i);
       }
-      if (t.hasAttribute("aria-expanded") || a.hasAttribute("data-aria-expanded")) {
-        const i = a.getAttribute("aria-hidden") === "true";
-        this.AriaExpand(a, !i);
+      if (t.hasAttribute("aria-expanded") || n.hasAttribute("data-aria-expanded")) {
+        const i = n.getAttribute("aria-hidden") === "true";
+        this.AriaExpand(n, !i);
       }
     });
   }
   getDelayValue(t) {
     let e = 0;
-    const n = t.getAttribute(this.delayAttribute);
-    if (typeof n == "string" && n.length > 0) {
-      const a = parseInt(n, 10);
-      isNaN(a) || (e = a);
+    const a = t.getAttribute(this.delayAttribute);
+    if (typeof a == "string" && a.length > 0) {
+      const n = parseInt(a, 10);
+      isNaN(n) || (e = n);
     }
     return e;
   }
