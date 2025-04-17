@@ -23,6 +23,6 @@ export default class ARIAManager {
 }
 interface ARIAManagerInitiationOptions {
     parent?: HTMLElement;
-    initiateElements?: Boolean;
+    initiateElements?: boolean;
 }
 export {};
