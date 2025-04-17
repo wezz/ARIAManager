@@ -1,6 +1,6 @@
 var u = Object.defineProperty;
 var c = (r, t, e) => t in r ? u(r, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : r[t] = e;
-var d = (r, t, e) => (c(r, typeof t != "symbol" ? t + "" : t, e), e);
+var d = (r, t, e) => c(r, typeof t != "symbol" ? t + "" : t, e);
 class h {
   constructor(t) {
     d(this, "controlelements", []);
@@ -79,13 +79,22 @@ class h {
     });
   }
   bindEventsToTargetElements(t) {
-    t.dataset.ariamanager_eventbindings !== "true" && (t.addEventListener("set-aria-hidden", this.setAriaHidden.bind(this)), t.addEventListener(
+    t.dataset.ariamanager_eventbindings !== "true" && (t.addEventListener(
+      "set-aria-hidden",
+      this.setAriaHidden.bind(this)
+    ), t.addEventListener(
       "set-aria-expanded",
       this.setAriaExpanded.bind(this)
     ), t.dataset.ariamanager_eventbindings = "true");
   }
   bindEventsToControlElements(t) {
-    t.addEventListener("click", this.onButtonClick.bind(this, t)), t.addEventListener("beforeClick", this.beforeClickEvent.bind(this, t)), t.addEventListener(
+    t.addEventListener(
+      "click",
+      this.onButtonClick.bind(this, t)
+    ), t.addEventListener(
+      "beforeClick",
+      this.beforeClickEvent.bind(this, t)
+    ), t.addEventListener(
       "adjustTargetStates",
       this.adjustTargetStates.bind(this, t)
     ), t.addEventListener(
