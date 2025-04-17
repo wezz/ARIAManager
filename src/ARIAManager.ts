@@ -26,10 +26,11 @@ export default class ARIAManager {
       return;
     }
     this.InitiateElements(constructorOptions.parent);
-    window.addEventListener("global-markupchange", (e) => {
-      this.InitiateElements((e as any)?.detail?.target ?? document);
-    });
+    window.addEventListener("global-markupchange", ((e: CustomEvent) => {
+      this.InitiateElements(e?.detail?.target ?? document);
+    }) as EventListener);
   }
+
   private parseOptions(options?: ARIAManagerInitiationOptions) {
     const defaultOptions = { parent: document.body, initiateElements: true };
     if (
@@ -45,7 +46,7 @@ export default class ARIAManager {
 
   public InitiateElements(parent: HTMLElement = document.body) {
     const controlElements = [].slice.call(
-      parent.querySelectorAll(this.controlselector)
+      parent.querySelectorAll(this.controlselector),
     ) as HTMLElement[];
     const newElements = controlElements.filter((elm) => {
       return elm.dataset.ariamanager !== "activated";
@@ -56,7 +57,7 @@ export default class ARIAManager {
     });
     this.controlelements = ([] as HTMLElement[]).concat(
       this.controlelements,
-      newElements
+      newElements,
     );
   }
 
@@ -69,7 +70,7 @@ export default class ARIAManager {
       this.customEvent("set-aria-expanded", {
         target: target,
         value: value,
-      })
+      }),
     );
   }
 
@@ -82,7 +83,7 @@ export default class ARIAManager {
       this.customEvent("set-aria-hidden", {
         target: target,
         value: value,
-      })
+      }),
     );
   }
 
@@ -103,7 +104,7 @@ export default class ARIAManager {
 
   public GetARIAControlTargets(element: HTMLElement) {
     const targetselectors = (element.getAttribute("aria-controls") + "").split(
-      " "
+      " ",
     );
     const targets: HTMLElement[] = [];
     const startWith = (stringvalue: string, charvalue: string) =>
@@ -126,13 +127,13 @@ export default class ARIAManager {
       this.customEvent("beforeClick", {
         delay: delay,
         elm: elm,
-      })
+      }),
     );
     window.setTimeout(() => {
       elm.dispatchEvent(
         this.customEvent("adjustTargetStates", {
           elm: elm,
-        })
+        }),
       );
     }, delay);
   }
@@ -150,28 +151,37 @@ export default class ARIAManager {
     if (target.dataset["ariamanager_eventbindings"] === "true") {
       return;
     }
-    target.addEventListener("set-aria-hidden", this.setAriaHidden.bind(this));
+    target.addEventListener(
+      "set-aria-hidden",
+      this.setAriaHidden.bind(this) as EventListener,
+    );
     target.addEventListener(
       "set-aria-expanded",
-      this.setAriaExpanded.bind(this)
+      this.setAriaExpanded.bind(this) as EventListener,
     );
     target.dataset["ariamanager_eventbindings"] = "true";
   }
 
   private bindEventsToControlElements(elm: HTMLElement) {
-    elm.addEventListener("click", this.onButtonClick.bind(this, elm));
-    elm.addEventListener("beforeClick", this.beforeClickEvent.bind(this, elm));
+    elm.addEventListener(
+      "click",
+      this.onButtonClick.bind(this, elm) as EventListener,
+    );
+    elm.addEventListener(
+      "beforeClick",
+      this.beforeClickEvent.bind(this, elm) as EventListener,
+    );
     elm.addEventListener(
       "adjustTargetStates",
-      this.adjustTargetStates.bind(this, elm)
+      this.adjustTargetStates.bind(this, elm) as EventListener,
     );
     elm.addEventListener(
       "updateButtonState",
-      this.updateButtonState.bind(this, elm)
+      this.updateButtonState.bind(this, elm) as EventListener,
     );
   }
 
-  private updateButtonState(elm: HTMLElement, e: any) {
+  private updateButtonState(elm: HTMLElement, e: CustomEvent) {
     const getAttrVal = (attrElm: HTMLElement, attr: string) =>
       attrElm.hasAttribute(attr) ? attrElm.getAttribute(attr) : null;
     const target = e.detail.target as HTMLElement;
@@ -183,7 +193,8 @@ export default class ARIAManager {
       elm.setAttribute("aria-expanded", (targetHidden === "false") + "");
     }
   }
-  private setAriaHidden(e: any) {
+
+  private setAriaHidden(e: CustomEvent) {
     const target = e.detail.target as HTMLElement;
     const value = e.detail.value;
     const relatedControls = this.GetARIAControllerFromTarget(target); // Gets controller from target
@@ -192,17 +203,18 @@ export default class ARIAManager {
       this.customEvent("aria-hidden-change", {
         target: target,
         value: value,
-      })
+      }),
     );
     relatedControls.forEach((relatedControl) => {
       relatedControl.dispatchEvent(
         this.customEvent("updateButtonState", {
           target: target,
-        })
+        }),
       );
     });
   }
-  private setAriaExpanded(e: any) {
+
+  private setAriaExpanded(e: CustomEvent) {
     const target = e.detail.target as HTMLElement;
     const value = e.detail.value;
     const relatedControls = this.GetARIAControllerFromTarget(target); // Gets controller from target
@@ -213,21 +225,23 @@ export default class ARIAManager {
       this.customEvent("aria-expanded-change", {
         target: target,
         value: value,
-      })
+      }),
     );
     relatedControls.forEach((relatedControl) => {
       relatedControl.dispatchEvent(
         this.customEvent("updateButtonState", {
           target: target,
-        })
+        }),
       );
     });
   }
+
   private beforeClickEvent(elm: HTMLElement, e: Event) {
     if (!elm || !e) {
       return;
     }
   }
+
   private adjustTargetStates(elm: HTMLElement, e: Event) {
     const targets = this.GetARIAControlTargets(elm); // Get target elements from button
     targets.forEach((target) => {
@@ -269,5 +283,5 @@ export default class ARIAManager {
 
 interface ARIAManagerInitiationOptions {
   parent?: HTMLElement;
-  initiateElements?: Boolean;
+  initiateElements?: boolean;
 }
