@@ -9,8 +9,8 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name: "ARIAManager",
-      fileName: "ARIAManager",
+      fileName: "index",
     },
   },
-  plugins: [dts()],
+  plugins: [dts({ rollupTypes: true })],
 });
