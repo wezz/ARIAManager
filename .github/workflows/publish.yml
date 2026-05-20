@@ -37,4 +37,4 @@ jobs:
           git push --follow-tags
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --provenance --access public
