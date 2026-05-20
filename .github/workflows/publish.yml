@@ -4,40 +4,37 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       id-token: write
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
-      - run: npm install
-        
-      - name: Setup GIT
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup git
         run: |
-          git reset --hard
-          git config --local --list
-          git checkout main
           git config user.email "wezz@wezz.se"
           git config user.name "Wezz Balk"
-        env:
-            GH_EMAIL: ${{secrets.GH_EMAIL}}
-          
-      - name: Bump version
+
+      - name: Bump version, build and push
         run: |
-          git reset --hard
+          git checkout -- .
           npm version patch
           npm run build
-          git add . || true
-          git commit -m "Build update" || true
-          git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          
-      - name: npm publish
-        run: npm run trypublish
+          git add .
+          git commit -m "chore: release" || true
+          git push --follow-tags
+
+      - name: Publish to npm
+        run: npm publish --access public
