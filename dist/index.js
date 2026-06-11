@@ -104,7 +104,7 @@ class h {
   }
   updateButtonState(t, e) {
     const n = (s, o) => s.hasAttribute(o) ? s.getAttribute(o) : null, a = e.detail.target, i = n(a, "aria-hidden");
-    t.hasAttribute("aria-pressed") && t.setAttribute("aria-pressed", (i === "false") + ""), t.hasAttribute("aria-expanded") && t.setAttribute("aria-expanded", (i === "false") + "");
+    t.hasAttribute("aria-pressed") && t.setAttribute("aria-pressed", i === "false" ? "true" : "false"), t.hasAttribute("aria-expanded") && t.setAttribute("aria-expanded", i === "false" ? "true" : "false");
   }
   setAriaHidden(t) {
     const e = t.detail.target, n = t.detail.value, a = this.GetARIAControllerFromTarget(e);

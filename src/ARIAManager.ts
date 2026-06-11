@@ -186,11 +186,14 @@ export default class ARIAManager {
       attrElm.hasAttribute(attr) ? attrElm.getAttribute(attr) : null;
     const target = e.detail.target as HTMLElement;
     const targetHidden = getAttrVal(target, "aria-hidden");
+    // NB: use a ternary rather than `(targetHidden === "false") + ""`.
+    // Vite 8 / rolldown (oxc) miscompiles `(x === "literal") + ""` into
+    // `x + "literal"`, producing values like "falsefalse" at runtime.
     if (elm.hasAttribute("aria-pressed")) {
-      elm.setAttribute("aria-pressed", (targetHidden === "false") + "");
+      elm.setAttribute("aria-pressed", targetHidden === "false" ? "true" : "false");
     }
     if (elm.hasAttribute("aria-expanded")) {
-      elm.setAttribute("aria-expanded", (targetHidden === "false") + "");
+      elm.setAttribute("aria-expanded", targetHidden === "false" ? "true" : "false");
     }
   }
 
