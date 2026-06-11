@@ -17,48 +17,48 @@ Delayed state change
     aria-hidden="true">Hidden until button is pressed</div>
 */
 export default class ARIAManager {
-  private controlelements: HTMLElement[] = [];
+  // Single shared instance. The constructor returns this, so every existing
+  // `new ARIAManager(...)` call site resolves to one manager — one set of event
+  // bindings, one global-markupchange listener, and one consistent view of
+  // every control on the page (no per-instance blind spots).
+  private static instance: ARIAManager | null = null;
   private controlselector = "[aria-controls]:not([data-ariamanager-ignore])";
   private delayAttribute = "data-ariamanager-delay";
   constructor(options?: ARIAManagerInitiationOptions) {
-    const constructorOptions = this.parseOptions(options);
-    if (!constructorOptions.initiateElements) {
-      return;
+    if (ARIAManager.instance) {
+      // Already built: just (re-)initialise the requested subtree and hand back
+      // the shared instance.
+      ARIAManager.instance.applyOptions(options);
+      return ARIAManager.instance;
     }
-    this.InitiateElements(constructorOptions.parent);
+    ARIAManager.instance = this;
     window.addEventListener("global-markupchange", ((e: CustomEvent) => {
       this.InitiateElements(e?.detail?.target ?? document);
     }) as EventListener);
+    this.applyOptions(options);
   }
 
   private parseOptions(options?: ARIAManagerInitiationOptions) {
-    const defaultOptions = { parent: document.body, initiateElements: true };
-    if (
-      !options ||
-      typeof options !== "object" ||
-      (typeof options.parent === "undefined" &&
-        typeof options.initiateElements === "undefined")
-    ) {
-      return defaultOptions;
-    }
-    return { ...defaultOptions, ...options };
+    return {
+      parent: options?.parent ?? document.body,
+      initiateElements: options?.initiateElements ?? true,
+    };
   }
 
-  public InitiateElements(parent: HTMLElement = document.body) {
-    const controlElements = [].slice.call(
-      parent.querySelectorAll(this.controlselector),
-    ) as HTMLElement[];
-    const newElements = controlElements.filter((elm) => {
-      return elm.dataset.ariamanager !== "activated";
-    });
-    newElements.forEach((elm) => {
-      this.bindEvents(elm);
-      elm.dataset.ariamanager = "activated";
-    });
-    this.controlelements = ([] as HTMLElement[]).concat(
-      this.controlelements,
-      newElements,
-    );
+  private applyOptions(options?: ARIAManagerInitiationOptions) {
+    const { parent, initiateElements } = this.parseOptions(options);
+    if (initiateElements) {
+      this.InitiateElements(parent);
+    }
+  }
+
+  public InitiateElements(parent: ParentNode = document.body) {
+    Array.from(parent.querySelectorAll<HTMLElement>(this.controlselector))
+      .filter((elm) => elm.dataset.ariamanager !== "activated")
+      .forEach((elm) => {
+        this.bindEvents(elm);
+        elm.dataset.ariamanager = "activated";
+      });
   }
 
   public AriaExpand(target: HTMLElement, value: boolean) {
@@ -88,18 +88,19 @@ export default class ARIAManager {
   }
 
   public GetARIAControllerFromTarget(target: HTMLElement) {
-    const targetid = target.getAttribute("id") + "";
+    const targetid = target.getAttribute("id") ?? "";
     if (!targetid) {
       return [] as HTMLElement[];
     }
-    const relatedControls = this.controlelements.filter((elm) => {
-      return (
-        (elm.getAttribute("aria-controls") + "")
-          .split(" ")
-          .indexOf(targetid) !== -1
-      );
-    });
-    return relatedControls;
+    // Query the DOM live rather than maintaining a cached array: no stale
+    // detached nodes to leak, and every control pointing at this id is found
+    // regardless of when it was added. `~=` matches one space-separated token,
+    // which is exactly aria-controls' token-list semantics.
+    return Array.from(
+      document.querySelectorAll<HTMLElement>(
+        `[aria-controls~="${targetid}"]:not([data-ariamanager-ignore])`,
+      ),
+    );
   }
 
   public GetARIAControlTargets(element: HTMLElement) {
@@ -246,23 +247,26 @@ export default class ARIAManager {
   }
 
   private adjustTargetStates(elm: HTMLElement, e: Event) {
+    if (!e) {
+      return;
+    }
     const targets = this.GetARIAControlTargets(elm); // Get target elements from button
     targets.forEach((target) => {
+      // Decide the next visible state once, before mutating anything, so the
+      // aria-hidden and aria-expanded writes can't disagree. (Previously the
+      // expanded write re-read aria-hidden after AriaHidden had already flipped
+      // it.)
+      const willBeVisible = target.getAttribute("aria-hidden") === "true";
       if (target.hasAttribute("aria-hidden")) {
-        const isHidden = target.getAttribute("aria-hidden") === "true";
-        this.AriaHidden(target, !isHidden);
+        this.AriaHidden(target, !willBeVisible);
       }
       if (
         elm.hasAttribute("aria-expanded") ||
         target.hasAttribute("data-aria-expanded")
       ) {
-        const isHidden = target.getAttribute("aria-hidden") === "true";
-        this.AriaExpand(target, !isHidden);
+        this.AriaExpand(target, willBeVisible);
       }
     });
-    if (!e) {
-      return;
-    }
   }
 
   private getDelayValue(elm: HTMLElement) {

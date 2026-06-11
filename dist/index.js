@@ -1,31 +1,31 @@
-var u = Object.defineProperty;
-var c = (r, t, e) => t in r ? u(r, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : r[t] = e;
-var d = (r, t, e) => c(r, typeof t != "symbol" ? t + "" : t, e);
-class h {
+var l = Object.defineProperty;
+var h = (d, t, e) => t in d ? l(d, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : d[t] = e;
+var o = (d, t, e) => h(d, typeof t != "symbol" ? t + "" : t, e);
+const s = class s {
   constructor(t) {
-    d(this, "controlelements", []);
-    d(this, "controlselector", "[aria-controls]:not([data-ariamanager-ignore])");
-    d(this, "delayAttribute", "data-ariamanager-delay");
-    const e = this.parseOptions(t);
-    e.initiateElements && (this.InitiateElements(e.parent), window.addEventListener("global-markupchange", (n) => {
+    o(this, "controlselector", "[aria-controls]:not([data-ariamanager-ignore])");
+    o(this, "delayAttribute", "data-ariamanager-delay");
+    if (s.instance)
+      return s.instance.applyOptions(t), s.instance;
+    s.instance = this, window.addEventListener("global-markupchange", (e) => {
       var a;
-      this.InitiateElements(((a = n == null ? void 0 : n.detail) == null ? void 0 : a.target) ?? document);
-    }));
+      this.InitiateElements(((a = e == null ? void 0 : e.detail) == null ? void 0 : a.target) ?? document);
+    }), this.applyOptions(t);
   }
   parseOptions(t) {
-    const e = { parent: document.body, initiateElements: !0 };
-    return !t || typeof t != "object" || typeof t.parent > "u" && typeof t.initiateElements > "u" ? e : { ...e, ...t };
+    return {
+      parent: (t == null ? void 0 : t.parent) ?? document.body,
+      initiateElements: (t == null ? void 0 : t.initiateElements) ?? !0
+    };
+  }
+  applyOptions(t) {
+    const { parent: e, initiateElements: a } = this.parseOptions(t);
+    a && this.InitiateElements(e);
   }
   InitiateElements(t = document.body) {
-    const n = [].slice.call(
-      t.querySelectorAll(this.controlselector)
-    ).filter((a) => a.dataset.ariamanager !== "activated");
-    n.forEach((a) => {
-      this.bindEvents(a), a.dataset.ariamanager = "activated";
-    }), this.controlelements = [].concat(
-      this.controlelements,
-      n
-    );
+    Array.from(t.querySelectorAll(this.controlselector)).filter((e) => e.dataset.ariamanager !== "activated").forEach((e) => {
+      this.bindEvents(e), e.dataset.ariamanager = "activated";
+    });
   }
   AriaExpand(t, e) {
     t && (this.bindEventsToTargetElements(t), t.dispatchEvent(
@@ -44,18 +44,22 @@ class h {
     ));
   }
   GetARIAControllerFromTarget(t) {
-    const e = t.getAttribute("id") + "";
-    return e ? this.controlelements.filter((a) => (a.getAttribute("aria-controls") + "").split(" ").indexOf(e) !== -1) : [];
+    const e = t.getAttribute("id") ?? "";
+    return e ? Array.from(
+      document.querySelectorAll(
+        `[aria-controls~="${e}"]:not([data-ariamanager-ignore])`
+      )
+    ) : [];
   }
   GetARIAControlTargets(t) {
     const e = (t.getAttribute("aria-controls") + "").split(
       " "
-    ), n = [], a = (i, s) => i.indexOf(s) === 0;
-    return e.forEach((i) => {
-      i = (!a(i, "#") && !a(i, ".") ? "#" : "") + i;
-      const s = document.querySelector(i);
-      s && n.push(s);
-    }), n;
+    ), a = [], i = (n, r) => n.indexOf(r) === 0;
+    return e.forEach((n) => {
+      n = (!i(n, "#") && !i(n, ".") ? "#" : "") + n;
+      const r = document.querySelector(n);
+      r && a.push(r);
+    }), a;
   }
   onButtonClick(t) {
     const e = this.getDelayValue(t);
@@ -74,8 +78,8 @@ class h {
   }
   bindEvents(t) {
     const e = t;
-    this.bindEventsToControlElements(e), this.GetARIAControlTargets(e).forEach((a) => {
-      this.bindEventsToTargetElements(a);
+    this.bindEventsToControlElements(e), this.GetARIAControlTargets(e).forEach((i) => {
+      this.bindEventsToTargetElements(i);
     });
   }
   bindEventsToTargetElements(t) {
@@ -103,18 +107,18 @@ class h {
     );
   }
   updateButtonState(t, e) {
-    const n = (s, o) => s.hasAttribute(o) ? s.getAttribute(o) : null, a = e.detail.target, i = n(a, "aria-hidden");
-    t.hasAttribute("aria-pressed") && t.setAttribute("aria-pressed", i === "false" ? "true" : "false"), t.hasAttribute("aria-expanded") && t.setAttribute("aria-expanded", i === "false" ? "true" : "false");
+    const a = (r, u) => r.hasAttribute(u) ? r.getAttribute(u) : null, i = e.detail.target, n = a(i, "aria-hidden");
+    t.hasAttribute("aria-pressed") && t.setAttribute("aria-pressed", n === "false" ? "true" : "false"), t.hasAttribute("aria-expanded") && t.setAttribute("aria-expanded", n === "false" ? "true" : "false");
   }
   setAriaHidden(t) {
-    const e = t.detail.target, n = t.detail.value, a = this.GetARIAControllerFromTarget(e);
-    e.setAttribute("aria-hidden", n), e.dispatchEvent(
+    const e = t.detail.target, a = t.detail.value, i = this.GetARIAControllerFromTarget(e);
+    e.setAttribute("aria-hidden", a), e.dispatchEvent(
       this.customEvent("aria-hidden-change", {
         target: e,
-        value: n
+        value: a
       })
-    ), a.forEach((i) => {
-      i.dispatchEvent(
+    ), i.forEach((n) => {
+      n.dispatchEvent(
         this.customEvent("updateButtonState", {
           target: e
         })
@@ -122,14 +126,14 @@ class h {
     });
   }
   setAriaExpanded(t) {
-    const e = t.detail.target, n = t.detail.value, a = this.GetARIAControllerFromTarget(e);
-    e.hasAttribute("data-aria-expanded") && e.setAttribute("data-aria-expanded", n + ""), e.dispatchEvent(
+    const e = t.detail.target, a = t.detail.value, i = this.GetARIAControllerFromTarget(e);
+    e.hasAttribute("data-aria-expanded") && e.setAttribute("data-aria-expanded", a + ""), e.dispatchEvent(
       this.customEvent("aria-expanded-change", {
         target: e,
-        value: n
+        value: a
       })
-    ), a.forEach((i) => {
-      i.dispatchEvent(
+    ), i.forEach((n) => {
+      n.dispatchEvent(
         this.customEvent("updateButtonState", {
           target: e
         })
@@ -139,23 +143,19 @@ class h {
   beforeClickEvent(t, e) {
   }
   adjustTargetStates(t, e) {
-    this.GetARIAControlTargets(t).forEach((a) => {
-      if (a.hasAttribute("aria-hidden")) {
-        const i = a.getAttribute("aria-hidden") === "true";
-        this.AriaHidden(a, !i);
-      }
-      if (t.hasAttribute("aria-expanded") || a.hasAttribute("data-aria-expanded")) {
-        const i = a.getAttribute("aria-hidden") === "true";
-        this.AriaExpand(a, !i);
-      }
+    if (!e)
+      return;
+    this.GetARIAControlTargets(t).forEach((i) => {
+      const n = i.getAttribute("aria-hidden") === "true";
+      i.hasAttribute("aria-hidden") && this.AriaHidden(i, !n), (t.hasAttribute("aria-expanded") || i.hasAttribute("data-aria-expanded")) && this.AriaExpand(i, n);
     });
   }
   getDelayValue(t) {
     let e = 0;
-    const n = t.getAttribute(this.delayAttribute);
-    if (typeof n == "string" && n.length > 0) {
-      const a = parseInt(n, 10);
-      isNaN(a) || (e = a);
+    const a = t.getAttribute(this.delayAttribute);
+    if (typeof a == "string" && a.length > 0) {
+      const i = parseInt(a, 10);
+      isNaN(i) || (e = i);
     }
     return e;
   }
@@ -164,7 +164,13 @@ class h {
       detail: e
     });
   }
-}
+};
+// Single shared instance. The constructor returns this, so every existing
+// `new ARIAManager(...)` call site resolves to one manager — one set of event
+// bindings, one global-markupchange listener, and one consistent view of
+// every control on the page (no per-instance blind spots).
+o(s, "instance", null);
+let c = s;
 export {
-  h as default
+  c as default
 };

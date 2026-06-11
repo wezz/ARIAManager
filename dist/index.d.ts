@@ -1,10 +1,11 @@
 declare class ARIAManager {
-    private controlelements;
+    private static instance;
     private controlselector;
     private delayAttribute;
     constructor(options?: ARIAManagerInitiationOptions);
     private parseOptions;
-    InitiateElements(parent?: HTMLElement): void;
+    private applyOptions;
+    InitiateElements(parent?: ParentNode): void;
     AriaExpand(target: HTMLElement, value: boolean): void;
     AriaHidden(target: HTMLElement, value: boolean): void;
     GetARIAControllerFromTarget(target: HTMLElement): HTMLElement[];
