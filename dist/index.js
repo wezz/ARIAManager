@@ -5,12 +5,15 @@ const s = class s {
   constructor(t) {
     o(this, "controlselector", "[aria-controls]:not([data-ariamanager-ignore])");
     o(this, "delayAttribute", "data-ariamanager-delay");
-    if (s.instance)
-      return s.instance.applyOptions(t), s.instance;
-    s.instance = this, window.addEventListener("global-markupchange", (e) => {
-      var a;
-      this.InitiateElements(((a = e == null ? void 0 : e.detail) == null ? void 0 : a.target) ?? document);
-    }), this.applyOptions(t);
+    o(this, "hideAttribute", "data-ariamanager-hide");
+    if (!(typeof document > "u")) {
+      if (s.instance)
+        return s.instance.applyOptions(t), s.instance;
+      s.instance = this, window.addEventListener("global-markupchange", (e) => {
+        var a;
+        this.InitiateElements(((a = e == null ? void 0 : e.detail) == null ? void 0 : a.target) ?? document);
+      }), this.applyOptions(t);
+    }
   }
   parseOptions(t) {
     return {
@@ -45,11 +48,14 @@ const s = class s {
   }
   GetARIAControllerFromTarget(t) {
     const e = t.getAttribute("id") ?? "";
-    return e ? Array.from(
+    if (!e)
+      return [];
+    const a = e.replace(/["\\]/g, "\\$&");
+    return Array.from(
       document.querySelectorAll(
-        `[aria-controls~="${e}"]:not([data-ariamanager-ignore])`
+        `[aria-controls~="${a}"]:not([data-ariamanager-ignore])`
       )
-    ) : [];
+    );
   }
   GetARIAControlTargets(t) {
     const e = (t.getAttribute("aria-controls") + "").split(
@@ -112,7 +118,7 @@ const s = class s {
   }
   setAriaHidden(t) {
     const e = t.detail.target, a = t.detail.value, i = this.GetARIAControllerFromTarget(e);
-    e.setAttribute("aria-hidden", a), e.dispatchEvent(
+    e.setAttribute("aria-hidden", a), this.applyHideStrategy(e, a), e.dispatchEvent(
       this.customEvent("aria-hidden-change", {
         target: e,
         value: a
@@ -149,6 +155,16 @@ const s = class s {
       const n = i.getAttribute("aria-hidden") === "true";
       i.hasAttribute("aria-hidden") && this.AriaHidden(i, !n), (t.hasAttribute("aria-expanded") || i.hasAttribute("data-aria-expanded")) && this.AriaExpand(i, n);
     });
+  }
+  // Opt-in: when a target carries data-ariamanager-hide="inert" (or "hidden"),
+  // also toggle that attribute alongside aria-hidden so hidden content leaves
+  // the tab order — aria-hidden alone does not remove focusable descendants.
+  // No attribute = original aria-only behaviour (backwards compatible).
+  // (Markup should set the matching initial inert/hidden state to agree with
+  // the initial aria-hidden value.)
+  applyHideStrategy(t, e) {
+    const a = t.getAttribute(this.hideAttribute);
+    a === "inert" ? t.toggleAttribute("inert", e) : a === "hidden" && t.toggleAttribute("hidden", e);
   }
   getDelayValue(t) {
     let e = 0;

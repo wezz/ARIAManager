@@ -24,7 +24,13 @@ export default class ARIAManager {
   private static instance: ARIAManager | null = null;
   private controlselector = "[aria-controls]:not([data-ariamanager-ignore])";
   private delayAttribute = "data-ariamanager-delay";
+  private hideAttribute = "data-ariamanager-hide";
   constructor(options?: ARIAManagerInitiationOptions) {
+    if (typeof document === "undefined") {
+      // No DOM (e.g. server-side rendering): do nothing and don't claim the
+      // singleton slot, so the first real client-side construction sets it up.
+      return;
+    }
     if (ARIAManager.instance) {
       // Already built: just (re-)initialise the requested subtree and hand back
       // the shared instance.
@@ -96,9 +102,11 @@ export default class ARIAManager {
     // detached nodes to leak, and every control pointing at this id is found
     // regardless of when it was added. `~=` matches one space-separated token,
     // which is exactly aria-controls' token-list semantics.
+    // Escape `"`/`\` so an unusual id can't break (or inject into) the selector.
+    const safeId = targetid.replace(/["\\]/g, "\\$&");
     return Array.from(
       document.querySelectorAll<HTMLElement>(
-        `[aria-controls~="${targetid}"]:not([data-ariamanager-ignore])`,
+        `[aria-controls~="${safeId}"]:not([data-ariamanager-ignore])`,
       ),
     );
   }
@@ -203,6 +211,7 @@ export default class ARIAManager {
     const value = e.detail.value;
     const relatedControls = this.GetARIAControllerFromTarget(target); // Gets controller from target
     target.setAttribute("aria-hidden", value);
+    this.applyHideStrategy(target, value);
     target.dispatchEvent(
       this.customEvent("aria-hidden-change", {
         target: target,
@@ -267,6 +276,21 @@ export default class ARIAManager {
         this.AriaExpand(target, willBeVisible);
       }
     });
+  }
+
+  // Opt-in: when a target carries data-ariamanager-hide="inert" (or "hidden"),
+  // also toggle that attribute alongside aria-hidden so hidden content leaves
+  // the tab order — aria-hidden alone does not remove focusable descendants.
+  // No attribute = original aria-only behaviour (backwards compatible).
+  // (Markup should set the matching initial inert/hidden state to agree with
+  // the initial aria-hidden value.)
+  private applyHideStrategy(target: HTMLElement, hidden: boolean) {
+    const strategy = target.getAttribute(this.hideAttribute);
+    if (strategy === "inert") {
+      target.toggleAttribute("inert", hidden);
+    } else if (strategy === "hidden") {
+      target.toggleAttribute("hidden", hidden);
+    }
   }
 
   private getDelayValue(elm: HTMLElement) {

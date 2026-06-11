@@ -21,17 +21,26 @@ import ARIAManager from "@wezz/ariamanager";
 new ARIAManager();
 ```
 
+ARIA Manager is a **singleton**: every `new ARIAManager(...)` returns the same
+shared instance. You can safely call it from multiple components — they all bind
+to one manager, so a control is never bound twice and every controller stays in
+sync. (Constructing it on the server is a no-op, so it's safe to import in
+server-rendered builds.)
+
 #### Initiation options
 
 The constructor can take the following options object
 
 ```js
-const ariaOptions = { 
-    parent: document.body, // This defined the entrypoint where ARIA Manager will query for relevant elements
-    initiateElements: true // This disables the automatic initiation
+const ariaOptions = {
+    parent: document.body, // Entry point where ARIA Manager queries for relevant elements
+    initiateElements: true // Set to false to skip the automatic initiation
 };
 new ARIAManager(ariaOptions);
 ```
+
+On the shared instance, passing `parent` simply scopes which elements that call
+initialises — it does not create a separate manager.
 
 ### Add WAI-ARIA attributes to markup
 
@@ -64,6 +73,34 @@ target.addEventListener('set-aria-hidden', (e) => {
 
 *Note that binding to a toggle buttons click event is not recommended when attempting to detect a state.<br/>
 There can be delays between the click event and that aria attributes are updated*
+
+### Removing hidden content from the tab order (`data-ariamanager-hide`)
+
+`aria-hidden` hides content from the accessibility tree, but focusable children
+inside a hidden region stay in the tab order. To also remove them, opt in per
+target with `data-ariamanager-hide`:
+
+```html
+<button aria-controls="panel" aria-expanded="false">Toggle</button>
+<!-- inert is toggled together with aria-hidden -->
+<div id="panel" aria-hidden="true" data-ariamanager-hide="inert" inert>…</div>
+```
+
+- `data-ariamanager-hide="inert"` — toggles the `inert` attribute (keeps layout,
+  best with CSS transitions).
+- `data-ariamanager-hide="hidden"` — toggles the `hidden` attribute (`display:none`).
+
+Set the initial `inert`/`hidden` in markup to match the initial `aria-hidden`
+value. Without the attribute, behaviour is unchanged (aria-only).
+
+### Delaying state changes (`data-ariamanager-delay`)
+
+Add `data-ariamanager-delay` (milliseconds) to a control to delay the state
+change after a click — useful to let a CSS transition start first.
+
+```html
+<button aria-controls="panel" aria-pressed="false" data-ariamanager-delay="150">Toggle</button>
+```
 
 ### Programatic triggers
 
@@ -125,6 +162,21 @@ Elements can be visually visible but hidden for users using screenreaders and mo
 The MatchMedia Attribute Manager makes it possible to remove or add ```aria-hidden``` depending on a media query.
 
 Use cases can be that you want to show a navigation in desktop, but in mobile it's supposed to be hidden by default and toggled by a button.
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md). This project follows
+[Keep a Changelog](https://keepachangelog.com/) and
+[Semantic Versioning](https://semver.org/).
+
+### Releasing
+
+1. Move the entries under `## [Unreleased]` in `CHANGELOG.md` into a new
+   `## [x.y.z] - YYYY-MM-DD` section.
+2. Bump `version` in `package.json` to match.
+3. Run `npm run check:exports` (publint + are-the-types-wrong).
+4. `npm publish` — `prepublishOnly` rebuilds and runs `publint`, so a package
+   with a broken `exports` map can't be published.
 
 ## Development & Demo
 

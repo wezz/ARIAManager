@@ -2,6 +2,7 @@ declare class ARIAManager {
     private static instance;
     private controlselector;
     private delayAttribute;
+    private hideAttribute;
     constructor(options?: ARIAManagerInitiationOptions);
     private parseOptions;
     private applyOptions;
@@ -19,6 +20,7 @@ declare class ARIAManager {
     private setAriaExpanded;
     private beforeClickEvent;
     private adjustTargetStates;
+    private applyHideStrategy;
     private getDelayValue;
     private customEvent;
 }
